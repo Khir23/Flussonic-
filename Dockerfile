@@ -13,6 +13,7 @@ RUN apt-get -y update && \
     rm -rf /var/lib/{apt,dpkg,cache,log}/
 
 ADD supervisord.conf /etc/supervisord.conf
+ADD license.txt /etc/flussonic/license.txt
 
 ENV TERM linux
 
