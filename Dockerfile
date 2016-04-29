@@ -1,5 +1,5 @@
 FROM ubuntu:14.04
-MAINTAINER Oleg Poyaganov <oleg@poyaganov.com>
+MAINTAINER Alejandro Ferrari <support@wmconsulting.info>
 
 RUN apt-get -y update && \
     apt-get install -y wget python-pip && \
@@ -18,6 +18,7 @@ ADD license.txt /etc/flussonic/license.txt
 ENV TERM linux
 
 VOLUME ["/var/log/flussonic"]
+VOLUME ["/etc/flussonic"]
 
 EXPOSE 80 8080 1935 554
 
