@@ -1,25 +1,22 @@
 FROM ubuntu:18.04
-MAINTAINER Alejandro Ferrari <support@wmconsulting.info>
 
-RUN apt-get -y update && \
-    apt-get install -y wget python-pip && \
-    wget -q -O - http://apt.flussonic.com/binary/gpg.key | apt-key add - && \
-    echo "deb http://apt.flussonic.com binary/" > /etc/apt/sources.list.d/flussonic.list && \
-    apt-get update && \
-    apt-get -y install flussonic flussonic-transcoder && \
-    pip install supervisor && \
-    apt-get clean autoclean && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/{apt,dpkg,cache,log}/
+ARG BRANCH=master
 
-ADD supervisord.conf /etc/supervisord.conf
-ADD license.txt /etc/flussonic/license.txt
+RUN apt-get update && apt-get -y install wget gnupg
+RUN echo "deb http://apt.flussonic.com/repo/ ${BRANCH}/" > /etc/apt/sources.list.d/flussonic.list
+RUN wget -q -O - http://apt.flussonic.com/binary/gpg.key | apt-key add -
 
-ENV TERM linux
+RUN apt update && apt -y install flussonic flussonic-transcoder
 
 VOLUME ["/var/log/flussonic"]
+VOLUME ["/var/run/flussonic"]
 VOLUME ["/etc/flussonic"]
 
-EXPOSE 80 8080 1935 554
+EXPOSE 80 443 1935 554
 
-CMD ["/usr/local/bin/supervisord"]
+WORKDIR /opt/flussonic
+CMD ["/opt/flussonic/bin/flussonic", \
+  "-e", "production", \
+  "-p", "/var/run/flussonic/pid", \
+  "-l", "/var/log/flussonic", \
+  "-noinput"]
